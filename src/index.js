@@ -46,24 +46,6 @@ export function target ( target ) {
 }
 
 export function transform ( source, options = {} ) {
-	let ast;
-
-	try {
-		ast = parse( source, {
-			ecmaVersion: 7,
-			preserveParens: true,
-			sourceType: 'script',
-			plugins: {
-				jsx: true,
-				objectSpread: true
-			}
-		});
-	} catch ( err ) {
-		err.snippet = getSnippet( source, err.loc );
-		err.toString = () => `${err.name}: ${err.message}\n${err.snippet}`;
-		throw err;
-	}
-
 	let transforms = target( options.target || {} );
 	Object.keys( options.transforms || {} ).forEach( name => {
 		if ( name === 'modules' ) {
@@ -75,6 +57,23 @@ export function transform ( source, options = {} ) {
 		if ( !( name in transforms ) ) throw new Error( `Unknown transform '${name}'` );
 		transforms[ name ] = options.transforms[ name ];
 	});
+
+	let ast;
+	try {
+		ast = parse( source, {
+			ecmaVersion: 7,
+			preserveParens: true,
+			sourceType: transforms.stripWith ? 'script' : 'module',
+			plugins: {
+				jsx: true,
+				objectSpread: true
+			}
+		});
+	} catch ( err ) {
+		err.snippet = getSnippet( source, err.loc );
+		err.toString = () => `${err.name}: ${err.message}\n${err.snippet}`;
+		throw err;
+	}
 
 	return new Program( source, ast, transforms, options ).export( options );
 }
