@@ -41,6 +41,7 @@ export function target ( target ) {
 		transforms[ name ] = false;
 	});
 
+	transforms.stripWith = false
 	return transforms;
 }
 
@@ -51,7 +52,7 @@ export function transform ( source, options = {} ) {
 		ast = parse( source, {
 			ecmaVersion: 7,
 			preserveParens: true,
-			sourceType: 'module',
+			sourceType: 'script',
 			plugins: {
 				jsx: true,
 				objectSpread: true
