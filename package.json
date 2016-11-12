@@ -12,7 +12,7 @@
     "README.md"
   ],
   "scripts": {
-    "build": "npm run build:umd && npm run build:es && npm run build:browser",
+    "build": "rollup -c --environment DEPS -f umd -o ../../Vue/vue-template-es2015-compiler/buble.js",
     "dev": "rollup -c -w -f umd -o dist/buble.umd.js",
     "build:umd": "rollup -c -f umd -o dist/buble.umd.js",
     "build:browser": "rollup -c --environment DEPS -f umd -o dist/buble.deps.js",

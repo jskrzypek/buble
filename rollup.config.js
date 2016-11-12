@@ -32,5 +32,5 @@ export default {
 		'acorn/dist/acorn.js': 'acorn',
 		'magic-string': 'MagicString'
 	},
-	sourceMap: true
+	sourceMap: !process.env.DEPS
 };
