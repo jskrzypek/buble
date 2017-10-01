@@ -1,4 +1,4 @@
-import acorn from 'acorn/dist/acorn.js';
+import * as acorn from 'acorn';
 import acornJsx from 'acorn-jsx/inject';
 import acornObjectSpread from 'acorn-object-spread/inject';
 import Program from './program/Program.js';
@@ -65,16 +65,25 @@ export function transform ( source, options = {} ) {
 	}
 
 	let ast;
+	let jsx = null;
+
 	try {
 		ast = parse( source, {
-			ecmaVersion: 7,
+			ecmaVersion: 8,
 			preserveParens: true,
 			sourceType: 'script',
+			onComment: (block, text) => {
+				if ( !jsx ) {
+					let match = /@jsx\s+([^\s]+)/.exec( text );
+					if ( match ) jsx = match[1];
+				}
+			},
 			plugins: {
 				jsx: true,
 				objectSpread: true
 			}
 		});
+		options.jsx = jsx || options.jsx;
 	} catch ( err ) {
 		err.snippet = getSnippet( source, err.loc );
 		err.toString = () => `${err.name}: ${err.message}\n${err.snippet}`;

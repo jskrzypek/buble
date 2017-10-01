@@ -1,5 +1,18 @@
 # buble changelog
 
+## 0.16.0
+
+* Allow truthy dash-cased props ([#2](https://github.com/Rich-Harris/buble/pull/2))
+* Make class accessors configurable ([#3](https://github.com/Rich-Harris/buble/pull/3))
+* Support JSX pragma comments ([#5](https://github.com/Rich-Harris/buble/pull/5))
+* Handle JSX with no spaces between attributes ([#6](https://github.com/Rich-Harris/buble/pull/6))
+
+## 0.15.2
+
+* Don't create function names for object methods with `namedFunctionExpressions: false`
+* Simplify destructuring assignment statements
+* Give unique names to methods that shadow free variables ([#166](https://gitlab.com/Rich-Harris/buble/issues/166))
+
 ## 0.15.1
 
 * Fix `Object.assign` regression ([#163](https://gitlab.com/Rich-Harris/buble/issues/163))

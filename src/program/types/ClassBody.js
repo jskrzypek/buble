@@ -86,7 +86,9 @@ export default class ClassBody extends Node {
 				let lhs;
 
 				let methodName = method.key.name;
-				if ( reserved[ methodName ] ) methodName = scope.createIdentifier( methodName );
+				if ( reserved[ methodName ] || method.value.body.scope.references[methodName] ) {
+					methodName = scope.createIdentifier( methodName );
+				}
 
 				// when method name is a string or a number let's pretend it's a computed method
 
@@ -140,7 +142,8 @@ export default class ClassBody extends Node {
 
 				code.insertRight( method.start, lhs );
 
-				const rhs = ( isAccessor ? `.${method.kind}` : '' ) + ` = function` + ( method.value.generator ? '* ' : ' ' ) + ( method.computed || isAccessor || !namedFunctions ? '' : `${methodName} ` );
+				const funcName = method.computed || isAccessor || !namedFunctions ? '' : `${methodName} `;
+				const rhs = ( isAccessor ? `.${method.kind}` : '' ) + ` = function` + ( method.value.generator ? '* ' : ' ' ) + funcName;
 				code.remove( c, method.value.start );
 				code.insertRight( method.value.start, rhs );
 				code.insertLeft( method.end, ';' );
@@ -153,12 +156,12 @@ export default class ClassBody extends Node {
 				let outro = [];
 
 				if ( prototypeGettersAndSetters.length ) {
-					intro.push( `var ${prototypeAccessors} = { ${prototypeGettersAndSetters.map( name => `${name}: {}` ).join( ',' )} };` );
+					intro.push( `var ${prototypeAccessors} = { ${prototypeGettersAndSetters.map( name => `${name}: { configurable: true }` ).join( ',' )} };` );
 					outro.push( `Object.defineProperties( ${name}.prototype, ${prototypeAccessors} );` );
 				}
 
 				if ( staticGettersAndSetters.length ) {
-					intro.push( `var ${staticAccessors} = { ${staticGettersAndSetters.map( name => `${name}: {}` ).join( ',' )} };` );
+					intro.push( `var ${staticAccessors} = { ${staticGettersAndSetters.map( name => `${name}: { configurable: true }` ).join( ',' )} };` );
 					outro.push( `Object.defineProperties( ${name}, ${staticAccessors} );` );
 				}
 

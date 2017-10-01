@@ -224,4 +224,51 @@ module.exports = [
 		`
 	},
 
+	{
+		description: 'fix no space between JSXOpeningElement attributes (#178)',
+
+		input: `
+			<div style={{color:'#000000'}}className='content'/>
+		`,
+		output: `
+			React.createElement( 'div', { style: {color:'#000000'}, className: 'content' })
+		`
+	},
+
+	{
+		description: 'supports /* @jsx customPragma */ directives (#195)',
+		input: `
+			/* @jsx customPragma */
+			var div = <div>Hello</div>
+		`,
+		output: `
+			/* @jsx customPragma */
+			var div = customPragma( 'div', null, "Hello" )
+		`
+	},
+
+	{
+		description: 'ignores subsequent /* @jsx customPragma */ directives (#195)',
+		input: `
+			/* @jsx customPragma */
+			/* @jsx customPragmaWannabe */
+			var div = <div>Hello</div>
+		`,
+		output: `
+			/* @jsx customPragma */
+			/* @jsx customPragmaWannabe */
+			var div = customPragma( 'div', null, "Hello" )
+		`
+	},
+
+	{
+		description: 'handles dash-cased value-less props',
+
+		input: `
+			<Thing data-foo></Thing>
+		`,
+		output: `
+			React.createElement( Thing, { 'data-foo': true })
+		`
+	}
 ];

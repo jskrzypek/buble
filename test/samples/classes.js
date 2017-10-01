@@ -447,8 +447,8 @@ module.exports = [
 				this.radius = radius;
 			};
 
-			var prototypeAccessors = { area: {} };
-			var staticAccessors = { description: {} };
+			var prototypeAccessors = { area: { configurable: true } };
+			var staticAccessors = { description: { configurable: true } };
 
 			prototypeAccessors.area.get = function () {
 				return Math.PI * Math.pow( this.radius, 2 );
@@ -500,8 +500,8 @@ module.exports = [
 				Circle.prototype = Object.create( Shape && Shape.prototype );
 				Circle.prototype.constructor = Circle;
 
-				var prototypeAccessors = { area: {} };
-				var staticAccessors = { description: {} };
+				var prototypeAccessors = { area: { configurable: true } };
+				var staticAccessors = { description: { configurable: true } };
 
 				prototypeAccessors.area.get = function () {
 					return Math.PI * Math.pow( this.radius, 2 );
@@ -803,7 +803,7 @@ module.exports = [
 		output: `
 			var Foo = function Foo () {};
 
-			var staticAccessors = { bar: {} };
+			var staticAccessors = { bar: { configurable: true } };
 
 			staticAccessors.bar.get = function () { return 'baz' };
 
@@ -1178,6 +1178,23 @@ module.exports = [
 			D[.75] = function (){};
 			D["Static Method"] = function (){};
 			D["foo"] = function (){};
+		`
+	},
+
+	{
+		description: "don't shadow variables with function names (#166)",
+
+		input: `
+			class X {
+				foo() { return foo }
+				bar() {}
+			}
+		`,
+		output: `
+			var X = function X () {};
+
+			X.prototype.foo = function foo$1 () { return foo };
+			X.prototype.bar = function bar () {};
 		`
 	},
 
